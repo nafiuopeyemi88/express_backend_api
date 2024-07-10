@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
-    author: {
+    createdBy: {
        type: mongoose.Types.ObjectId,
        ref: 'User',
-       required: [true, 'Please provide company name'] 
+       required: [true, 'Please provide user'] 
     },
     body: {
         type: String,
@@ -15,7 +15,7 @@ const CommentSchema = new mongoose.Schema({
 
 
 const ArticleSchema = new mongoose.Schema({
-    author: {
+    createdBy: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: [true, 'Please provide user']
@@ -39,8 +39,8 @@ const ArticleSchema = new mongoose.Schema({
     optional_image : {
         type: String,
     },
-    comments: [commentSchema],
-    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    comments: [CommentSchema],
+    bookmarks: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     is_draft: {
         type: Boolean,
         default: false,

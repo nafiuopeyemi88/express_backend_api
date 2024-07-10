@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-const bcryptjs = require('bcryptjs')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
-const Userschema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: [true, 'Please provide name'],
@@ -25,7 +25,12 @@ const Userschema = new mongoose.Schema({
             'Please provide a valid email',
           ],
           unique: true,
-    }
+    },
+    password : {
+        type: String,
+        required: [true, 'Please provide password'],
+        minlength: 6,
+    },
 })
 
 
@@ -35,18 +40,18 @@ UserSchema.pre('save', async function () {
   })
 
 
-Userschema.methods.createJWT = function () {
+UserSchema.methods.createJWT = function () {
     return jwt.sign(
         { userId: this._Id, username: this.username },
         process.env.JWT_SECRET,
         {
-            expiresIn: process.JWT_LIFETIME,
+            expiresIn: process.env.JWT_LIFETIME,
         }
     )
 }
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
-    const isMatch = await becrypt.compare(candidatePassword, this.password)
+    const isMatch = await bcrypt.compare(candidatePassword, this.password)
     return isMatch
 }
 

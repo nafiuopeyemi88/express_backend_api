@@ -1,0 +1,223 @@
+openapi: 3.0.0
+info:
+  title: Blogs API
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://jobs-api-06.herokuapp.com/api/v1
+    variables: {}
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register User
+      operationId: RegisterUser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+            example:
+              name: bob
+              email: bob@gmail.com
+              password: secret
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login User
+      operationId: LoginUser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+            example:
+              email: susan@gmail.com
+              password: secret
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /articles:
+    post:
+      tags:
+        - Articles
+      summary: Create Article
+      operationId: CreateArticle
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+            example:
+              title: some title
+              subtitle: some subtitle
+              content: longggggggggggggg content
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    get:
+      tags:
+        - Articles
+      summary: Get All Articles
+      operationId: GetAllArticles
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /articles/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The article ID
+    get:
+      tags:
+        - Articles
+      summary: Get Single Article
+      operationId: GetSingleArticle
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+
+    patch:
+      tags:
+        - Articles
+      summary: Update Article
+      operationId: UpdateArticle
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArticleRequest'
+            example:
+              company: random
+              position: intern
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    delete:
+      tags:
+        - Articles
+      summary: Delete Article
+      operationId: DeleteArticle
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+components:
+  schemas:
+    RegisterUserRequest:
+      title: RegisterUserRequest
+      required:
+        - name
+        - email
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        name: bob
+        email: bob@gmail.com
+        password: secret
+    LoginUserRequest:
+      title: LoginUserRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: susan@gmail.com
+        password: secret
+    CreateJobRequest:
+      title: CreateArticleRequest
+      required:
+        - title
+        - subtitle
+        - content
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        content:
+          type: string
+      example:
+        title: the title of the article
+        subtitle: the subtitle of this article
+        content: the content of this article is so long, since it is actually a blog
+    UpdateArticleRequest:
+      title: UpdateArticleRequest
+      required:
+        - title
+        - subtitle
+        - content
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        content:
+          type: string
+      example:
+        title: the title of the article
+        subtitle: the subtitle of this article
+        content: the content of this article is so long, since it is actually a blog
+  securitySchemes:
+    httpBearer:
+      type: http
+      scheme: bearer
+security:
+  - httpBearer: []
+tags:
+  - name: Auth
+    description: ''
+  - name: Articles
+    description: ''

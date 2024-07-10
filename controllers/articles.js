@@ -10,7 +10,7 @@ const { BadRequestError, NotFoundError } = require('../errors')
 
 
 const getAllArticles = async (req, res) => {
-    const articles = await Article.find({ author: req.user.userId }).sort('createdAt')
+    const articles = await Article.find({ createdBy: req.user.userId }).sort('createdAt')
     res.status(StatusCodes.OK).json({ articles, count: articles.length })
   }
 
@@ -33,7 +33,7 @@ const getArticle = async (req, res) => {
 
 
 const createArticle = async (req, res) => {
-    req.body.Article = req.user.userId
+    req.body.createdBy = req.user.userId
     const article = await Article.create(req.body)
     res.status(StatusCodes.CREATED).json({ article })
   }
@@ -86,4 +86,4 @@ module.exports = {
 }
 
 
- 
+  
