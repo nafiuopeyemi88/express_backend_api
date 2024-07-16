@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
-    createdBy: {
+    author: {
        type: mongoose.Types.ObjectId,
        ref: 'User',
        required: [true, 'Please provide user'] 
@@ -15,7 +15,7 @@ const CommentSchema = new mongoose.Schema({
 
 
 const ArticleSchema = new mongoose.Schema({
-    createdBy: {
+    author: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: [true, 'Please provide user']

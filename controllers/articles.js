@@ -10,7 +10,7 @@ const { BadRequestError, NotFoundError } = require('../errors')
 
 
 const getAllArticles = async (req, res) => {
-    const articles = await Article.find({ createdBy: req.user.userId }).sort('createdAt')
+    const articles = await Article.find({ author: req.user.userId }).sort('createdAt')
     res.status(StatusCodes.OK).json({ articles, count: articles.length })
   }
 
@@ -23,7 +23,7 @@ const getArticle = async (req, res) => {
 
     const article = await Article.findOne({
         _id: articleId,
-        createdBy: userId,
+        author: userId,
       })
       if (!article) {
         throw new NotFoundError(`No article with id ${articleId}`)
@@ -33,7 +33,7 @@ const getArticle = async (req, res) => {
 
 
 const createArticle = async (req, res) => {
-    req.body.createdBy = req.user.userId
+    req.body.author = req.user.userId
     const article = await Article.create(req.body)
     res.status(StatusCodes.CREATED).json({ article })
   }
@@ -50,7 +50,7 @@ const updateArticle = async (req, res) => {
       throw new BadRequestError('Title or Subtitle or Content fields cannot be empty')
     }
     const article = await Article.findByIdAndUpdate(
-      { _id: articleId, createdBy: userId },
+      { _id: articleId, author: userId },
       req.body,
       { new: true, runValidators: true }
     )
@@ -68,7 +68,7 @@ const deleteArticle = async (req, res) => {
   
     const article = await Article.findByIdAndRemove({
       _id: articleId,
-      createdBy: userId,
+      author: userId,
     })
     if (!article) {
       throw new NotFoundError(`No article with id ${articleId}`)
@@ -86,4 +86,3 @@ module.exports = {
 }
 
 
-  
