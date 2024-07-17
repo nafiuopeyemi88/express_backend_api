@@ -76,6 +76,55 @@ const deleteArticle = async (req, res) => {
     res.status(StatusCodes.OK).send()
   }
 
+  const createComment = async (req, res) => {
+    const { body: { body }, user: { userId }, params: { id: articleId } } = req;
+  
+    if (!body) {
+      throw new BadRequestError('Comment body cannot be empty');
+    }
+
+    const comment = {
+      author: userId,
+      body: body,
+    };
+
+    const article = await Article.findByIdAndUpdate(
+      { _id: articleId },
+      { $push: { comments: comment } },
+      { new: true, runValidators: false }
+    );
+
+    if (!article) {
+      throw new NotFoundError(`No article with id ${articleId}`);
+    }
+
+    res.status(StatusCodes.OK).json({ article });
+};
+ 
+ const updateComment = async (req, res) => {
+  const {
+    body: { body },
+    user: { userId },
+    params: { comment_id: commentId, article_id: articleId },
+  } = req
+
+  if (!body) {
+    throw new BadRequestError('Body field can not be empty')
+  }
+  const article = await Article.findOneAndUpdate(
+    { _id: articleId, "comments._id": commentId, "comments.author": userId },
+    { $set: { "comments.$.body": body, } },
+    { new: true, runValidators: false }
+);
+
+  if (!article) {
+    throw new NotFoundError(`No comment with id ${articleId} for this`)
+  }
+  res.status(StatusCodes.OK).json({ article })
+ }
+
+
+
 
 module.exports = {
   createArticle,
@@ -83,6 +132,6 @@ module.exports = {
   deleteArticle,
   getAllArticles,
   getArticle,
+  createComment,
+  updateComment,
 }
-
-
