@@ -50,7 +50,6 @@ const ArticleSchema = new mongoose.Schema({
         default: false,
     },
 },
-
 { timestamps: true },
 )
 

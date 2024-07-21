@@ -17,5 +17,5 @@ router.route('/').post(createArticle).get(getAllArticles)
 router.route('/:id').get(getArticle).delete(deleteArticle).patch(updateArticle).post(createComment)
 router.route('/:article_id/comments/:comment_id').patch(updateComment)
 
-//router.patch('/articles/:articleId/comments/:commentId', updateComment);
+
 module.exports = router
