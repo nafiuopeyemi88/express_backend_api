@@ -1,7 +1,6 @@
 const Project = require('../models/articles/Project')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors') 
-const { body, validationResult } = require("express-validator");
 
 
 
@@ -90,16 +89,26 @@ const updateProject = async (req, res) => {
       params: { id: projectId },
     } = req
   
-    const project = await Project.findByIdAndUpdate(
-      { _id: projectId, owner: userId },
-      req.body,
-      { new: true, runValidators: true }
-    )
-    if (!project) {
-      throw new NotFoundError(`No project with id ${projectId}`)
-    }
-    res.status(StatusCodes.OK).json({ project })
 
+    const project = await Project.findById(projectId)
+
+    if (!project){
+      return res.status(StatusCodes.NOT_FOUND).json({ message: `No project with id ${projectId}` });
+    }
+
+    if (project.owner.toString() !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({ message: 'You do not have permission to edit this project' });
+    }
+
+    // Update the project
+    Object.assign(project, projectData);
+    if (tags) project.tags = tags;
+    if (plugins) project.plugins = plugins;
+    if (tools) project.tools = tools;
+
+    await project.save();
+
+    res.status(StatusCodes.OK).json({ project })
 }
 
 const deleteProject = async (req, res) => {
@@ -107,14 +116,16 @@ const deleteProject = async (req, res) => {
       user: { userId },
       params: { id: projectId },
     } = req
-  
-    const project = await Project.findByIdAndRemove({
-      _id: projectId,
-      author: userId,
-    })
+    
     if (!project) {
-      throw new NotFoundError(`No project with id ${projectId}`)
+      return res.status(StatusCodes.NOT_FOUND).json({ message: `No project with id ${projectId}` });
     }
+
+    if (project.owner.toString() !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({ message: 'You do not have permission to delete this project' });
+    }
+    await Project.findByIdAndRemove(projectId);
+
     res.status(StatusCodes.OK).send()
   }
 
