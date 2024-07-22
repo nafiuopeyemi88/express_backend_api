@@ -12,10 +12,12 @@ const {
     createComment,
     likeProject,
     bookmarkProject,
+    getFeedProjects,
  } = require('../controllers/project')
 
 
 router.route('/').post(validateProject, createProject).get(getAllProjects)
+router.route('/feeds').get(getFeedProjects)
 router.route('/:id').get(getProject).delete(deleteProject).patch(validateProject, updateProject).post(createComment).post(likeProject).post(bookmarkProject)
 //router.route('/:project_id/comments/:comment_id').patch(updateComment)
 

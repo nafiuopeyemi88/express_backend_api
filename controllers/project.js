@@ -8,18 +8,44 @@ const { body, validationResult } = require("express-validator");
 // create project, delete project, get project for a user, get all projects - paginate, like project, bookmark project, comment on a project
 
 
-// all projects by a user - paginate it
-const getAllProjects = async (req, res) => {
-    const { page, limit } = req.query.page
-    const projects = await Project.find({ author: req.user.userId }).sort('createdAt')
-    res.status(StatusCodes.OK).json({ projects, count: projects.length})
+const getFeedProjects = async (req, res) => {
+  
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  let result = Project.find({ is_draft: false, is_private: false} )
+
+  result = result.skip(skip).limit(limit)
+
+  const projects = await result;
+
+  const totalProjects = await Project.countDocuments({ is_draft: false, is_private: false})
+  const numOfPages = Math.ceil(totalProjects/ limit);
+  res.status(StatusCodes.OK).json({ projects, totalProjects, numOfPages})
 }
 
 
-// const getAllProjects = async (req, res) => {
-//     const { page, limit } = req.query
-//     const projects = await Project.find()
-// }
+
+// all projects by a user - paginate it
+const getAllProjects = async (req, res) => {
+    const queryObject = {
+      owner: req.user.userId,
+    };
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    let result = Project.find(queryObject)
+
+    result = result.skip(skip).limit(limit);
+
+    const projects = await result;
+    
+    const totalProjects = await Project.countDocuments(queryObject);
+
+    const numOfPages = Math.ceil(totalProjects / limit);
+    res.status(StatusCodes.OK).json({ projects, totalProjects, numOfPages})
+}
+
 
 
 const getProject = async (req, res) => {
@@ -30,7 +56,7 @@ const getProject = async (req, res) => {
 
     const project = await Project.findOne({
         _id: projectId,
-        author: userId,
+        owner: userId,
       })
       if (!project) {
         throw new NotFoundError(`No project with id ${projectId}`)
@@ -40,11 +66,8 @@ const getProject = async (req, res) => {
 
 
 const createProject = async (req, res) => {
-    // req.body.owner = req.user.userId
-    // const project = await Project.create(req.body)
-    // res.status(StatusCodes.CREATED).json({ project })
 
-      req.body.owner = req.user.userId;
+    req.body.owner = req.user.userId; 
       const { tags, plugins, tools, ...projectData } = req.body;
       const project = new Project({
         ...projectData,
@@ -62,7 +85,7 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
     const {
-      body: { title, content, tags, tools, plugins, image, is_draft, is_private },
+      body: { tags, plugins, tools, ...projectData },
       user: { userId },
       params: { id: projectId },
     } = req
@@ -168,6 +191,7 @@ module.exports = {
   createComment,
   bookmarkProject,
   likeProject,
+  getFeedProjects,
 }
 
 
