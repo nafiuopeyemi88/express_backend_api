@@ -1,4 +1,4 @@
-const Project = require('../models/articles/Project')
+const Project = require('../models/projects/Project')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors') 
 
@@ -190,6 +190,8 @@ const likeProject = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ project });
 }
+
+
 
 
 
