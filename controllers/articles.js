@@ -75,7 +75,7 @@ const updateArticle = async (req, res) => {
     } = req
     
 
-    const article = await Article.findById(projectId)
+    const article = await Article.findById(articleId)
 
     if (!article){
       return res.status(StatusCodes.NOT_FOUND).json({ message: `No article with id ${articleId}` });
