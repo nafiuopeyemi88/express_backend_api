@@ -168,8 +168,7 @@ const getArticleComments = async (req, res) => {
     const {
       params: { id: articleId }
     } = req
-
-
+    
     const article = await Article.findOne({
       _id: articleId,
     }).select('comments').populate('comments.author', 'username'); 
@@ -179,7 +178,7 @@ const getArticleComments = async (req, res) => {
     }
 
     res.status(StatusCodes.OK).json({ comments: article.comments });
-    //res.status(StatusCodes.OK).json(article);
+    
 }
 
 
