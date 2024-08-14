@@ -116,7 +116,7 @@ const deleteProject = async (req, res) => {
       user: { userId },
       params: { id: projectId },
     } = req
-    
+    const project = await Project.findById(projectId)
     if (!project) {
       return res.status(StatusCodes.NOT_FOUND).json({ message: `No project with id ${projectId}` });
     }
